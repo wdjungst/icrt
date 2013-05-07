@@ -1,0 +1,40 @@
+!!!
+%html
+  %head
+    <link href="/css/icrt.css" rel="stylesheet" type="text/css">
+    <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/css/bootstrap-responsive.min.css" rel="stylesheet" type="text/css">
+    %meta{:charset => "utf-8"}
+    %meta{:content => "IE=edge,chrome=1", "http-equiv" => "X-UA'Compatible"}/
+    %title
+      Instructure Conference Room Tracker
+    %meta{:content => "", :name => "description"}/
+    %meta{:content => "width=device-width", :name => "viewport"}/
+    :css
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+  %body
+    .contnet-wrapper
+      .row-fluid.span12
+        .page-header.title
+          %h1
+            Instructure Conference Room Tracker
+            %small App by Dave Jungst & Jake Sorce
+        %img{:border => "0", :height => "365", :src => "images/conference_rooms.png", :usemap => "#map", :width => "756"}/
+        %map{:id => "map", :name => "map"}
+          %area{:href => "#", :coords => "84,225,159,325", :class => "room", :id => "room_multics_so", :shape => "rect"}/
+          %area{:href => "#", :coords => "161,225,214,275", :class => "room", :id => "room_hurd_so", :shape => "rect"}/
+          %area{:href => "#", :coords => "160,275,215,326", :class => "room", :id => "room_minix_so", :shape => "rect"}/
+          %area{:href => "#", :coords => "308,261,424,331", :class => "room", :id => "room_hp-ux_se", :shape => "rect"}/
+          %area{:href => "#", :coords => "425,275,476,331", :class => "room", :id => "room_dos_e", :shape => "rect"}/
+          %area{:href => "#", :coords => "425,218,477,274", :class => "room", :id => "room_bsd_e", :shape => "rect"}/
+          %area{:href => "#", :coords => "410,48,481,130", :class => "room", :id => "room_netware_n", :shape => "rect"}/
+          %area{:href => "#", :coords => "511,102,568,147", :class => "room", :id => "room_plan9_n", :shape => "rect"}/
+          %area{:href => "#", :coords => "511,49,568,100", :class => "room", :id => "room_system1_n", :shape => "rect"}/
+          %area{:href => "#", :coords => "615,181,665,243", :class => "room", :id => "room_beos_ne", :shape => "rect"}/
+          %area{:href => "#", :coords => "666,181,715,243", :class => "room", :id => "room_amigaos_ne", :shape => "rect"}/
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+  <script src="/javascripts/icrt.js"></script>
+  %script{:type => "text/javascript", :src => "/javascripts/bootstrap.min.js", "data-toggle" => "tab"}
