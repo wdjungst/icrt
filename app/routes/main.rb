@@ -1,6 +1,8 @@
 require 'rubygems'
+require 'google/api_client'
 
 class ICRT < Sinatra::Application
+  
   get '/' do
     haml :index
   end
