@@ -22,8 +22,8 @@
           %h1
             Instructure Conference Room Tracker
             %small App by Dave Jungst & Jake Sorce
-        %img.pull-left{:border => "0", :height => "365", :src => "images/conference_rooms.png", :usemap => "#map", :width => "756"}/
-        %map.map{:id => "map", :name => "map"}
+        %img.pull-left{:class => "map", :border => "0", :height => "365", :src => "images/conference_rooms.png", :usemap => "#map", :width => "756"}/
+        %map.map{:name => "map"}
           %area{:href => "#", :coords => "84,225,159,325", :class => "room", :id => "instructure.com_3336383934393632323839@resource.calendar.google.com", :shape => "rect"}/
           %area{:href => "#", :coords => "161,225,214,275", :class => "room", :id => "instructure.com_35353435363634322d353735@resource.calendar.google.com", :shape => "rect"}/
           %area{:href => "#", :coords => "160,275,215,326", :class => "room", :id => "instructure.com_2d3433363235383239373538@resource.calendar.google.com", :shape => "rect"}/
@@ -32,7 +32,7 @@
           %area{:href => "#", :coords => "425,218,477,274", :class => "room", :id => "instructure.com_2d3134383735383530393230@resource.calendar.google.com", :shape => "rect"}/
           %area{:href => "#", :coords => "410,48,481,130", :class => "room", :id => "instructure.com_2d35323436363732342d313434@resource.calendar.google.com", :shape => "rect"}/
           %area{:href => "#", :coords => "511,102,568,147", :class => "room", :id => "instructure.com_2d35363438313633332d373831@resource.calendar.google.com", :shape => "rect"}/
-          %area{:href => "#", :coords => "511,49,568,100", :class => "room", :id => "instructure.com_2d35313039343536312d333839@resource.calendar.google.com@resource.calendar.google.com", :shape => "rect"}/
+          %area{:href => "#", :coords => "511,49,568,100", :class => "room", :id => "instructure.com_2d35313039343536312d333839@resource.calendar.google.com", :shape => "rect"}/
           %area{:href => "#", :coords => "615,181,665,243", :class => "room", :id => "instructure.com_2d34333836313235352d373338@resource.calendar.google.com", :shape => "rect"}/
           %area{:href => "#", :coords => "666,181,715,243", :class => "room", :id => "instructure.com_2d3939343731333536343132@resource.calendar.google.com", :shape => "rect"}/
         #time_frame.pull-left
@@ -47,6 +47,6 @@
             %option
               4 Hours
   %script{:type => "text/javascript", :src => "//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"}
-  %script{:type => "text/javascript", :src => "/javascripts/icrt.js", "data-toggle" => "tab"}
   %script{:type => "text/javascript", :src => "/javascripts/bootstrap.min.js", "data-toggle" => "tab"}
   %script{:type => "text/javascript", :src => "/javascripts/jquery.maphilight.js", "data-toggle" => "tab"}
+  %script{:type => "text/javascript", :src => "/javascripts/icrt.js", "data-toggle" => "tab"}
