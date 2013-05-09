@@ -7,7 +7,6 @@ $ ->
         data: "room=#{$(room).attr('id')}&time=#{$('#time_select').val()}"
         success: (data) ->
           console.log('success')
-          alert(data)
         error: (data) ->
           console.log('fail')
           alert(data)
@@ -24,3 +23,5 @@ $ ->
   $('area').hover ->
     #if color is red set disabled attr and class on area
     console.log("hovered on " + $(@).attr('id'))
+  
+  $('.map').maphilight()

@@ -13,8 +13,7 @@
           url: '/room',
           data: "room=" + ($(room).attr('id')) + "&time=" + ($('#time_select').val()),
           success: function(data) {
-            console.log('success');
-            return alert(data);
+            return console.log('success');
           },
           error: function(data) {
             console.log('fail');
@@ -31,9 +30,10 @@
     $('#time_select').bind('change', function() {
       return postRooms($('.room'));
     });
-    return $('area').hover(function() {
+    $('area').hover(function() {
       return console.log("hovered on " + $(this).attr('id'));
     });
+    return $('.map').maphilight();
   });
 
 }).call(this);
