@@ -3,6 +3,7 @@ require 'sinatra'
 require 'yaml'
 require 'haml'
 require 'rack/contrib'
+require 'activesupport'
 
 class ICRT < Sinatra::Application
   set :public_folder, 'public', File.dirname(__FILE__)

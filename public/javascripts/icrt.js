@@ -2,9 +2,34 @@
 (function() {
 
   $(function() {
+    var postRooms;
+    postRooms = function(rooms) {
+      var room, _i, _len, _results;
+      _results = [];
+      for (_i = 0, _len = rooms.length; _i < _len; _i++) {
+        room = rooms[_i];
+        _results.push($.ajax({
+          type: "POST",
+          url: '/room',
+          data: "room=" + ($(room).attr('id')) + "&time=" + ($('#time_select').val()),
+          success: function(data) {
+            console.log('success');
+            return alert(data);
+          },
+          error: function(data) {
+            console.log('fail');
+            return alert(data);
+          }
+        }));
+      }
+      return _results;
+    };
+    postRooms($('.room'));
     $('area').bind('click', function(e) {
-      e.preventDefault();
-      return alert("clicked on " + $(this).attr('id'));
+      return e.preventDefault();
+    });
+    $('#time_select').bind('change', function() {
+      return postRooms($('.room'));
     });
     return $('area').hover(function() {
       return console.log("hovered on " + $(this).attr('id'));
