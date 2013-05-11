@@ -11,9 +11,9 @@
           data: "room=" + ($(l).attr('id')) + "&time=" + ($('#time_select').val()),
           success: function(data) {
             if (data === 'true') {
-              return $(l).attr('data-maphilight', '{"fillColor":"228B22","fillOpacity":"0.6", "alwaysOn":true}').trigger("alwaysOn.maphilight");
+              return $(l).attr('data-maphilight', '{"fillColor":"228B22","fillOpacity":"0.3", "alwaysOn":true}').trigger("alwaysOn.maphilight");
             } else {
-              return $(l).attr('data-maphilight', '{"fillColor":"FFFFFF","fillOpacity":"1.0", "alwaysOn":true}').trigger("alwaysOn.maphilight");
+              return $(l).attr('data-maphilight', '{"fillColor":"FF0000","fillOpacity":"0.3", "alwaysOn":true}').trigger("alwaysOn.maphilight");
             }
           },
           error: function(data) {

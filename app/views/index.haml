@@ -17,7 +17,7 @@
       }
   %body
     .contnet-wrapper
-      .row-fluid.span12
+      .container
         .page-header.title
           %h1
             Instructure Conference Room Tracker
@@ -36,7 +36,7 @@
           %area{:href => "#", :coords => "615,181,665,243", :class => "room", :id => "instructure.com_2d34333836313235352d373338@resource.calendar.google.com", :shape => "rect"}/
           %area{:href => "#", :coords => "666,181,715,243", :class => "room", :id => "instructure.com_2d3939343731333536343132@resource.calendar.google.com", :shape => "rect"}/
         #time_frame.pull-left
-          %label{:for => 'time_select'} Time Frame - Default- 30 Minutes From Now:
+          %label{:for => 'time_select'} Time Frame: Default - Now Until 30 Minutes
           %select#time_select
             %option
               30 Minutes
