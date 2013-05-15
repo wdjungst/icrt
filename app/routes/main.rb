@@ -1,31 +1,3 @@
-require 'rubygems'
-require 'google/api_client'
-require 'logger'
-require 'yaml'
-require 'open-uri'
-require 'net/https'
-require 'pry'
-require 'activesupport'
-
-CONFIG = YAML::load_file(File.expand_path(File.dirname(__FILE__) + '../../../config/config.yml'))
-
-module Net
-  class HTTP
-    alias_method :original_use_ssl=, :use_ssl=
-
-    def use_ssl=(flag)
-      if File.exists?('/etc/ssl/certs')
-        self.ca_path = '/etc/ssl/certs'
-      elsif File.exists?('/usr/local/Cellar/curl-ca-bundle/1.87/share/ca-bundle.crt')
-        self.ca_file = '/usr/local/Cellar/curl-ca-bundle/1.87/share/ca-bundle.crt'
-      end
-
-      self.verify_mode = OpenSSL::SSL::VERIFY_PEER
-      self.original_use_ssl = flag
-    end
-  end
-end
-
 class ICRT < Sinatra::Application
   enable :sessions
   @@rooms = { :MULTICS => "instructure.com_3336383934393632323839@resource.calendar.google.com", :HURD => "instructure.com_35353435363634322d353735@resource.calendar.google.com",
@@ -84,9 +56,12 @@ class ICRT < Sinatra::Application
     logger = Logger.new(log_file)
     logger.level = Logger::DEBUG
 
-    client = Google::APIClient.new
-    client.authorization.client_id = CONFIG['client_id']
-    client.authorization.client_secret = CONFIG['client_secret']
+    client = Google::APIClient.new(
+      :application_name => 'icrt',
+      :application_version => '1.0'
+    )
+    client.authorization.client_id = CONFIG['google-api']['client_id']
+    client.authorization.client_secret = CONFIG['google-api']['client_secret']
     client.authorization.scope = 'https://www.googleapis.com/auth/calendar'
 
     calendar = client.discovered_api('calendar', 'v3')
@@ -94,7 +69,6 @@ class ICRT < Sinatra::Application
     set :logger, logger
     set :api_client, client
     set :calendar, calendar
-
   end
 
   before do

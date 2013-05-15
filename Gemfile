@@ -1,5 +1,6 @@
 source 'https://www.rubygems.org'
 
+gem 'json', '~> 1.7.7'
 gem 'sinatra'
 gem 'rake'
 gem 'thin'
@@ -7,4 +8,5 @@ gem 'unicorn'
 gem 'rack-contrib'
 gem 'haml'
 gem 'google-api-client'
-gem 'active_support'
+gem 'activesupport'
+gem 'pry'
