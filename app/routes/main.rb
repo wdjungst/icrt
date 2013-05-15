@@ -44,6 +44,18 @@ class ICRT < Sinatra::Application
    )
   end
   
+  def validate_response(response)
+    if response[2].include? "dateTime" 
+      if response[2].include? "cancelled"
+        return true
+      else 
+        return false
+      end
+    else
+      return true
+    end
+  end
+
   def room_available?(room, time)
     times = { '30' => 30, '1' => 60, '2' => 120, '4' => 240 }
     converted_time = times[time]
@@ -55,7 +67,8 @@ class ICRT < Sinatra::Application
                                 :authorization => user_credentials)
 
     response = [result.status, {'Content-Type' => 'application/json'}, result.data.to_json]
-    !response[2].include? "dateTime"
+    puts response[2]
+    validate_response(response)
   end
 
   configure do
@@ -107,5 +120,9 @@ class ICRT < Sinatra::Application
   post '/room' do
     time = params[:time].split(' ').first
     room_available?(params[:room], time).to_s
+  end
+
+  get '/book_room/:room' do |room|
+    room
   end
 end

@@ -19,8 +19,9 @@ $ ->
 
   $('area').bind 'click', (e) ->
     e.preventDefault()
-    # figure out how to redirect to google cal with the correct room and time
-
+    $.get "book_room/" + $(@).attr('id'), (response) ->
+      alert (response)
+    $('#reserve_modal').modal('show')
   $('#time_select').bind 'change', ->
     $('.room').data("maphilight",
         alwaysOn: false

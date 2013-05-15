@@ -1,0 +1,20 @@
+#reserve_modal.modal.hide.fade
+  .modal-header
+    %button.close{"aria-hidden" => "true", "data-dismiss" => "modal", :type => "button"} x
+    %h3 Reserve Room
+  .modal-body.center
+    %form#reserve_form.dialog-top.pad-bottom
+      .pad-bottom
+        %label{:for => "title"} Event Title
+        %input#event_title{:type => "text", :name => "title"}
+        %label{:for => "start"} Start Time
+        %input#start_time{:type => "text", :name => "start"}
+        %label{:for => "end"} End Time
+        %input#end_time{:type => "text", :name => "end"}
+        %label{:for => "room"} Room
+        %input#room_name{:type => "text", :name => "room"}
+        %label{:for => "attendees"} Attendees
+        %textarea#attendees{"rows" => "4", :name => "attendees"}
+  .modal-footer
+    %button.btn{"data-dismiss" => "modal", "aria-hidden" => "true"} Close
+    %button.btn.btn-primary Submit
