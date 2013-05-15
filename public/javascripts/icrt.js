@@ -58,10 +58,10 @@
                 label: "Modify Event Details",
                 id: "book-details",
                 callback: function() {
-                  $('#event_id').val([0]);
-                  $('#room_name').val([1]);
-                  $('#start_time').val(values[2]);
-                  $('#end_time').val(values[3]);
+                  $('#event_id').val(event_details[0]);
+                  $('#room_name').val(event_details[1]);
+                  $('#start_time').val(event_details[2]);
+                  $('#end_time').val(event_details[3]);
                   return $('#reserve_modal').modal('show');
                 }
               }, {
