@@ -1,3 +1,4 @@
+
 class ICRT < Sinatra::Application
   enable :sessions
   @@rooms = { :MULTICS => "instructure.com_3336383934393632323839@resource.calendar.google.com", :HURD => "instructure.com_35353435363634322d353735@resource.calendar.google.com",
@@ -7,8 +8,9 @@ class ICRT < Sinatra::Application
              :Plan9 => "instructure.com_2d35363438313633332d373831@resource.calendar.google.com", :BeOS => "instructure.com_2d34333836313235352d373338@resource.calendar.google.com",
              :AmigaOS => "instructure.com_2d3939343731333536343132@resource.calendar.google.com" }
 
-  @@times = { '30' => 30, '100' => 60, '130' => 90, '200' => 120, '230' => '150', '300' => '180', '330' => '220', '400' => '250'  }
-  
+  @@times = { '30' => 30, '100' => 60, '130' => 90, '200' => 120, '230' => 150, '300' => 180, '330' => 220, '400' => 250  }
+  @@end_event = Time.now.in_time_zone('America/Denver')
+
   def loger; settings.logger end
 
   def api_client; settings.api_client; end
@@ -38,26 +40,35 @@ class ICRT < Sinatra::Application
 
   def room_available?(room, time)
     converted_time = @@times[time]
-    puts converted_time
-    Time.zone = "America/Denver"
+    @@end_event = round_time(Time.now.in_time_zone('America/Denver') + converted_time.minutes)
     result = api_client.execute(:api_method => settings.calendar.events.list, 
-                                :parameters => {'calendarId' =>"#{room}", 'timeMin' => Time.zone.now.iso8601, 
-                                                'timeMax' => (Time.zone.now + converted_time.minutes).iso8601}, 
+                                :parameters => {'calendarId' =>"#{room}", 'timeMin' => Time.now.in_time_zone('America/Denver').iso8601, 
+                                                'timeMax' => @@end_event.iso8601}, 
                                 :authorization => user_credentials)
 
     response = [result.status, {'Content-Type' => 'application/json'}, result.data.to_json]
-    puts response[2]
-    validate_response(response)
+    validate_response(response) 
   end
 
-  def round_time(time)
-    time = Time.now.in_time_zone("America/Denver")
-    minutes = time.strftime("%M").to_i
-    if minutes < 15
-      #do something
+  def closest(n)
+    closest_interval = [0, 15, 30, 45, 60].map { |m|
+      [m, (m - n).abs]
+    }.min_by { |_, minutes_away|
+      minutes_away
+    }
+    closest_interval.first
+  end
+ 
+  def round_time(t)
+    minutes = t.strftime("%M").to_i
+    round_to = closest(minutes)
+    if round_to == 60
+      time = t.change(:min => 00)
+      time += 1.hours
     else
-      #do something else
+      time = t.change(:min => round_to)
     end
+    time
   end
 
   configure do
@@ -113,25 +124,33 @@ class ICRT < Sinatra::Application
   end
 
   post '/book_room' do
-    #duration = params[:duration].split(' ').first
-    #converted_time = @@times[duration]
-    #end_time = (Time.now.in_time_zone(Time.zone) + converted_time.minutes).strftime("%I:%M%p")
-    #make api request to book room
-    converted_time = @@times[params[:duration].gsub!(':', '')]
     Time.zone = "America/Denver"
     start_time = Time.now.in_time_zone(Time.zone)
-    end_time = (Time.now.in_time_zone(Time.zone) + converted_time)
-    event = { 'start' => { 'dateTime' => start_time.iso8601 }, 'end' => { 'dateTime' => end_time.iso8601 } } 
+    event = { 'summary' => 'STOLEN!', 'start' => { 'dateTime' => "#{start_time.iso8601}" }, 'end' => { 'dateTime' => "#{@@end_event.iso8601}" } } 
 
-    result = client.execute(:api_method => service.events.insert,
+    result = api_client.execute(:api_method => settings.calendar.events.insert,
                             :parameters => {'calendarId' => params[:room_id]},
-                            :body_object => event,
+                            :authorization => user_credentials,
+                            :body => JSON.dump(event),
                             :headers => {'Content-Type' => 'application/json'})
-   puts result
-   "eventID,#{@@rooms.key(params[:room_id]",#{start_time.strftime("%I:%M%p")},#{end_time.strftime("%I:%M%p")}"
- end
-  post '/change_room_details' do
-    # get event id and modify the event on  this post action, return an error to the modal if the event can't be changed for some reason
-    "#{@@rooms.key(params[:room_id]).to_s},#{Time.now.in_time_zone(Time.zone).strftime("%I:%M%p")},#{end_time}"
+    halt 400 if result.status != 200
+    parsed = JSON.parse(result.data.to_json)
+    puts result.data.to_json
+    event_id = parsed['id']
+    creator = parsed['creator']
+    name = creator['displayName']
+    email = creator['email']
+    "#{event_id},#{@@rooms.key(params[:room_id])},#{start_time.strftime("%I:%M%p")},#{@@end_event.strftime("%I:%M%p")}"
+  end
+  
+  post '/update_event_details' do
+    update = { 'summary' => params[:title], 'attendees[]' => params[:attendees] } 
+    result = api_client.execute(:api_method => settings.calendar.events.update,
+                                 :parameters => {'calendarId' => params[:room], 'eventId' => params[:event_id]},
+                                 :authorization => user_credentials,
+                                 :body => JSON.dump(update),
+                                 :headers => {'Content-Type' => 'applicaiont/json'})
+    puts result.to_json
+    halt 400 if result.status != 200
   end
 end
