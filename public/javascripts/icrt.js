@@ -41,17 +41,39 @@
     };
     postRooms($('.room'));
     $('area').bind('click', function(e) {
-      var $area;
+      var $area, duration;
       e.preventDefault();
       $area = $(this);
+      duration = $('#time_select').val();
       if (!$area.hasClass('not-available')) {
-        return $.get("/book_room?room_id=" + ($area.attr('id')) + "&duration=" + ($('#time_select').val()), function(response) {
-          var values;
-          $('#reserve_modal').modal('show');
-          values = response.split(",");
-          $('#room_name').val(values[0]);
-          $('#start_time').val(values[1]);
-          return $('#end_time').val(values[2]);
+        return $.ajax({
+          type: 'POST',
+          url: '/book_room',
+          data: "room_id=" + ($area.attr('id')) + "&duration=" + duration,
+          success: function(data) {
+            var event_details;
+            event_details = data.split(',');
+            return bootbox.dialog("Room Booked!", [
+              {
+                label: "Modify Event Details",
+                id: "book-details",
+                callback: function() {
+                  $('#event_id').val([0]);
+                  $('#room_name').val([1]);
+                  $('#start_time').val(values[2]);
+                  $('#end_time').val(values[3]);
+                  return $('#reserve_modal').modal('show');
+                }
+              }, {
+                label: "Ok",
+                id: "book-confirm",
+                callback: function() {}
+              }
+            ]);
+          },
+          error: function() {
+            return console.log('error');
+          }
         });
       }
     });

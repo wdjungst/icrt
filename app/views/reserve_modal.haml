@@ -15,6 +15,7 @@
         %input#room_name{:readonly => "readonly", :type => "text", :name => "room"}
         %label{:for => "attendees"} Attendees
         %textarea#attendees{"rows" => "4", :name => "attendees"}
+      %input#event_id{:type => "hidden", :name => "event_id"} 
   .modal-footer
     %button.btn{"data-dismiss" => "modal", "aria-hidden" => "true"} Close
-    %button.btn.btn-primary Submit
+    %button.btn.btn-primary{:type => "submit"} Submit

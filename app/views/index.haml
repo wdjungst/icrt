@@ -39,15 +39,22 @@
           %label{:for => 'time_select'} Time Frame: Default - Now Until 30 Minutes
           %select#time_select
             %option
-              30 Minutes
+              %p :30
             %option
-              1 Hour
+              %p 1:30
             %option
-              2 Hours
+              %p 2:00
             %option
-              4 Hours
+              %p 2:30 
+            %option
+              %p 3:00
+            %option
+              %p 3:30
+            %option
+              %p 4:00
     = haml :reserve_modal
   %script{:type => "text/javascript", :src => "//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"}
   %script{:type => "text/javascript", :src => "/javascripts/bootstrap.min.js", "data-toggle" => "tab"}
   %script{:type => "text/javascript", :src => "/javascripts/jquery.maphilight.js", "data-toggle" => "tab"}
+  %script{:type => "text/javascript", :src => "/javascripts/bootbox.min.js", "data-toggle" => "tab"}
   %script{:type => "text/javascript", :src => "/javascripts/icrt.js", "data-toggle" => "tab"}

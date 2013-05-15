@@ -27,13 +27,32 @@ $ ->
   $('area').bind 'click', (e) ->
     e.preventDefault()
     $area = $(@)
+    duration = $('#time_select').val()
     unless $area.hasClass('not-available')
-      $.get "/book_room?room_id=#{$area.attr('id')}&duration=#{$('#time_select').val()}", (response) ->
-        $('#reserve_modal').modal('show')
-        values = response.split(",")
-        $('#room_name').val(values[0])
-        $('#start_time').val(values[1])
-        $('#end_time').val(values[2])
+      $.ajax
+        type: 'POST',
+        url: '/book_room',
+        data: "room_id=#{$area.attr('id')}&duration=#{duration}",
+        success: (data) ->
+          event_details = data.split(',')
+          bootbox.dialog "Room Booked!", [
+            label: "Modify Event Details"
+            id: "book-details"
+            callback: ->
+              $('#event_id').val([0])
+              $('#room_name').val([1])
+              $('#start_time').val(values[2])
+              $('#end_time').val(values[3])
+              $('#reserve_modal').modal('show')
+          ,
+            label: "Ok"
+            id: "book-confirm"
+            callback: ->
+              #close dialog and requery the rooms
+          ]
+        error: ->
+          #close dialog and requrey rooms to show avai rooms
+          console.log('error')
 
   $('#time_select').bind 'change', ->
     console.log 'time select changed'
