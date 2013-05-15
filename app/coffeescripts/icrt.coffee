@@ -43,7 +43,7 @@ $ ->
               $('#room_name').val(event_details[1])
               $('#start_time').val(event_details[2])
               $('#end_time').val(event_details[3])
-              $('#reserve_modal').modal('show')
+              $('#update_modal').modal('show')
           ,
             label: "Ok"
             id: "book-confirm"
@@ -54,7 +54,21 @@ $ ->
           #close dialog and requrey rooms to show avai rooms
           console.log('error')
 
-  $('#cancel_reservation_update').bind 'click', (e) ->
+  $('#update_event').bind 'click', (e) ->
+    e.preventDefault()
+    #disable action buttons
+    $.ajax
+      type: 'POST',
+      url: '/update_event_details',
+      data: $('#update_event_form').serializeArray(),
+      success: (data) ->
+        $('#update_modal').modal('hide')
+        postRooms($('.room'))
+      error: (data) ->
+        $('.error-box').html(data)
+    false
+
+  $('#cancel_event_update').bind 'click', (e) ->
     e.preventDefault()
     postRooms($('.room'))
 

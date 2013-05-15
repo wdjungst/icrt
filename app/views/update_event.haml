@@ -1,0 +1,20 @@
+#update_modal.modal.hide.fade
+  .modal-header
+    %h3 Update Event Details
+  .modal-body.center
+    %form#update_event_form.dialog-top.pad-bottom
+      .pad-bottom
+        %label{:for => "title"} Event Title
+        %input#event_title{:type => "text", :name => "title"}
+        %label{:for => "start"} Start Time
+        %input#start_time{:readonly => "readonly", :type => "text", :name => "start"}
+        %label{:for => "end"} End Time
+        %input#end_time{:readonly => "readonly", :type => "text", :name => "end"}
+        %label{:for => "room"} Room
+        %input#room_name{:readonly => "readonly", :type => "text", :name => "room"}
+        %label{:for => "attendees"} Attendees
+        %textarea#attendees{"rows" => "4", :name => "attendees"}
+      %input#event_id{:type => "hidden", :name => "event_id"} 
+  .modal-footer
+    %button.btn#cancel_event_update{"data-dismiss" => "modal", "aria-hidden" => "true"} Cancel
+    %button#update_event.btn.btn-primary Update Event

@@ -62,7 +62,7 @@
                   $('#room_name').val(event_details[1]);
                   $('#start_time').val(event_details[2]);
                   $('#end_time').val(event_details[3]);
-                  return $('#reserve_modal').modal('show');
+                  return $('#update_modal').modal('show');
                 }
               }, {
                 label: "Ok",
@@ -79,7 +79,23 @@
         });
       }
     });
-    $('#cancel_reservation_update').bind('click', function(e) {
+    $('#update_event').bind('click', function(e) {
+      e.preventDefault();
+      $.ajax({
+        type: 'POST',
+        url: '/update_event_details',
+        data: $('#update_event_form').serializeArray(),
+        success: function(data) {
+          $('#update_modal').modal('hide');
+          return postRooms($('.room'));
+        },
+        error: function(data) {
+          return $('.error-box').html(data);
+        }
+      });
+      return false;
+    });
+    $('#cancel_event_update').bind('click', function(e) {
       e.preventDefault();
       return postRooms($('.room'));
     });
