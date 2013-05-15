@@ -50,6 +50,16 @@ class ICRT < Sinatra::Application
     validate_response(response)
   end
 
+  def round_time(time)
+    time = Time.now.in_time_zone("America/Denver")
+    minutes = time.strftime("%M").to_i
+    if minutes < 15
+      #do something
+    else
+      #do something else
+    end
+  end
+
   configure do
     log_file = File.open('calendar.log', 'a+')
     log_file.sync = true
@@ -103,12 +113,23 @@ class ICRT < Sinatra::Application
   end
 
   post '/book_room' do
-    duration = params[:duration].split(' ').first
-    converted_time = @@times[duration]
-    end_time = (Time.now.in_time_zone(Time.zone) + converted_time.minutes).strftime("%I:%M%p")
+    #duration = params[:duration].split(' ').first
+    #converted_time = @@times[duration]
+    #end_time = (Time.now.in_time_zone(Time.zone) + converted_time.minutes).strftime("%I:%M%p")
     #make api request to book room
-  end
+    converted_time = @@times[params[:duration].gsub!(':', '')]
+    Time.zone = "America/Denver"
+    start_time = Time.now.in_time_zone(Time.zone)
+    end_time = (Time.now.in_time_zone(Time.zone) + converted_time)
+    event = { 'start' => { 'dateTime' => start_time.iso8601 }, 'end' => { 'dateTime' => end_time.iso8601 } } 
 
+    result = client.execute(:api_method => service.events.insert,
+                            :parameters => {'calendarId' => params[:room_id]},
+                            :body_object => event,
+                            :headers => {'Content-Type' => 'application/json'})
+   puts result
+   "eventID,#{@@rooms.key(params[:room_id]",#{start_time.strftime("%I:%M%p")},#{end_time.strftime("%I:%M%p")}"
+ end
   post '/change_room_details' do
     # get event id and modify the event on  this post action, return an error to the modal if the event can't be changed for some reason
     "#{@@rooms.key(params[:room_id]).to_s},#{Time.now.in_time_zone(Time.zone).strftime("%I:%M%p")},#{end_time}"
