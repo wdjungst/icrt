@@ -19,13 +19,13 @@ $ ->
 
   $('area').bind 'click', (e) ->
     e.preventDefault()
-    $.get "/book_room?room_id=#{$(@).attr('id')}", (response) ->
-      alert (response)
+    $.get "/book_room?room_id=#{$(@).attr('id')}&duration=#{$('#time_select').val()}", (response) ->
       $('#reserve_modal').modal('show')
       values = response.split(",")
       $('#room_name').val(values[0])
       $('#start_time').val(values[1])
-  
+      $('#end_time').val(values[2])
+      
   $('#time_select').bind 'change', ->
     $('.room').data("maphilight",
         alwaysOn: false

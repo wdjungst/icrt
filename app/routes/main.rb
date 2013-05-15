@@ -35,6 +35,8 @@ class ICRT < Sinatra::Application
              :Plan9 => "instructure.com_2d35363438313633332d373831@resource.calendar.google.com", :BeOS => "instructure.com_2d34333836313235352d373338@resource.calendar.google.com",
              :AmigaOS => "instructure.com_2d3939343731333536343132@resource.calendar.google.com" }
 
+  @@times = { '30' => 30, '1' => 60, '2' => 120, '4' => 240 }
+  
   def loger; settings.logger end
 
   def api_client; settings.api_client; end
@@ -63,8 +65,7 @@ class ICRT < Sinatra::Application
   end
 
   def room_available?(room, time)
-    times = { '30' => 30, '1' => 60, '2' => 120, '4' => 240 }
-    converted_time = times[time]
+    converted_time = @@times[time]
     puts converted_time
     Time.zone = "America/Denver"
     result = api_client.execute(:api_method => settings.calendar.events.list, 
@@ -129,6 +130,9 @@ class ICRT < Sinatra::Application
   end
 
   get '/book_room' do
-    "#{@@rooms.key(params[:room_id]).to_s},#{Time.now.in_time_zone(Time.zone).strftime("%I:%M%p")}"
+    duration = params[:duration].split(' ').first
+    converted_times = @@times[duration]
+    end_time = (Time.now.in_time_zone(Time.zone) + converted_times.minutes).strftime("%I:%M%p")
+    "#{@@rooms.key(params[:room_id]).to_s},#{Time.now.in_time_zone(Time.zone).strftime("%I:%M%p")},#{end_time}"
   end
 end

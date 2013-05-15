@@ -27,13 +27,13 @@
     postRooms($('.room'));
     $('area').bind('click', function(e) {
       e.preventDefault();
-      return $.get("/book_room?room_id=" + ($(this).attr('id')), function(response) {
+      return $.get("/book_room?room_id=" + ($(this).attr('id')) + "&duration=" + ($('#time_select').val()), function(response) {
         var values;
-        alert(response);
         $('#reserve_modal').modal('show');
         values = response.split(",");
         $('#room_name').val(values[0]);
-        return $('#start_time').val(values[1]);
+        $('#start_time').val(values[1]);
+        return $('#end_time').val(values[2]);
       });
     });
     return $('#time_select').bind('change', function() {

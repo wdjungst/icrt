@@ -6,13 +6,13 @@
     %form#reserve_form.dialog-top.pad-bottom
       .pad-bottom
         %label{:for => "title"} Event Title
-        %input#event_title{:type => "text", :name => "title"}
+        %input#event_title{:required => "required",:type => "text", :name => "title"}
         %label{:for => "start"} Start Time
-        %input#start_time{:type => "text", :name => "start"}
+        %input#start_time{:readonly => "readonly", :type => "text", :name => "start"}
         %label{:for => "end"} End Time
-        %input#end_time{:type => "text", :name => "end"}
+        %input#end_time{:readonly => "readonly", :type => "text", :name => "end"}
         %label{:for => "room"} Room
-        %input#room_name{:type => "text", :name => "room"}
+        %input#room_name{:readonly => "readonly", :type => "text", :name => "room"}
         %label{:for => "attendees"} Attendees
         %textarea#attendees{"rows" => "4", :name => "attendees"}
   .modal-footer
