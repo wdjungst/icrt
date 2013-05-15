@@ -48,7 +48,7 @@ $ ->
             label: "Ok"
             id: "book-confirm"
             callback: ->
-              #close dialog and requery the rooms
+              postRooms($('.room'))
           ]
         error: ->
           #close dialog and requrey rooms to show avai rooms

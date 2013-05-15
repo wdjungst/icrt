@@ -67,7 +67,9 @@
               }, {
                 label: "Ok",
                 id: "book-confirm",
-                callback: function() {}
+                callback: function() {
+                  return postRooms($('.room'));
+                }
               }
             ]);
           },
