@@ -27,7 +27,7 @@ $ ->
   $('area').bind 'click', (e) ->
     e.preventDefault()
     $area = $(@)
-    unless area.hasClass('not-available')
+    unless $area.hasClass('not-available')
       $.get "/book_room?room_id=#{$area.attr('id')}&duration=#{$('#time_select').val()}", (response) ->
         $('#reserve_modal').modal('show')
         values = response.split(",")

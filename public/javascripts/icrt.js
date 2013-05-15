@@ -44,7 +44,7 @@
       var $area;
       e.preventDefault();
       $area = $(this);
-      if (!area.hasClass('not-available')) {
+      if (!$area.hasClass('not-available')) {
         return $.get("/book_room?room_id=" + ($area.attr('id')) + "&duration=" + ($('#time_select').val()), function(response) {
           var values;
           $('#reserve_modal').modal('show');
