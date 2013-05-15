@@ -7,7 +7,7 @@ class ICRT < Sinatra::Application
              :Plan9 => "instructure.com_2d35363438313633332d373831@resource.calendar.google.com", :BeOS => "instructure.com_2d34333836313235352d373338@resource.calendar.google.com",
              :AmigaOS => "instructure.com_2d3939343731333536343132@resource.calendar.google.com" }
 
-  @@times = { '30' => 30, '1' => 60, '2' => 120, '4' => 240 }
+  @@times = { '30' => 30, '100' => 60, '130' => 90, '200' => 120, '230' => '150', '300' => '180', '330' => '220', '400' => '250'  }
   
   def loger; settings.logger end
 
@@ -99,14 +99,18 @@ class ICRT < Sinatra::Application
   end
 
   post '/room' do
-    time = params[:time].split(' ').first
-    room_available?(params[:room], time).to_s
+    room_available?(params[:room], params[:time].gsub!(':', '')).to_s
   end
 
-  get '/book_room' do
+  post '/book_room' do
     duration = params[:duration].split(' ').first
-    converted_times = @@times[duration]
-    end_time = (Time.now.in_time_zone(Time.zone) + converted_times.minutes).strftime("%I:%M%p")
+    converted_time = @@times[duration]
+    end_time = (Time.now.in_time_zone(Time.zone) + converted_time.minutes).strftime("%I:%M%p")
+    #make api request to book room
+  end
+
+  post '/change_room_details' do
+    # get event id and modify the event on  this post action, return an error to the modal if the event can't be changed for some reason
     "#{@@rooms.key(params[:room_id]).to_s},#{Time.now.in_time_zone(Time.zone).strftime("%I:%M%p")},#{end_time}"
   end
 end
