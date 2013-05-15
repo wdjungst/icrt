@@ -28,6 +28,12 @@ end
 
 class ICRT < Sinatra::Application
   enable :sessions
+  @@rooms = { :MULTICS => "instructure.com_3336383934393632323839@resource.calendar.google.com", :HURD => "instructure.com_35353435363634322d353735@resource.calendar.google.com",
+             :MINIX => "instructure.com_2d3433363235383239373538@resource.calendar.google.com", :HP_UX => "instructure.com_34323832363030373531@resource.calendar.google.com",
+             :DOS => "instructure.com_2d38353538383937372d353232@resource.calendar.google.com", :BSD => "instructure.com_2d3134383735383530393230@resource.calendar.google.com",
+             :Netware => "instructure.com_2d35323436363732342d313434@resource.calendar.google.com", :System1 => "instructure.com_2d35313039343536312d333839@resource.calendar.google.com",
+             :Plan9 => "instructure.com_2d35363438313633332d373831@resource.calendar.google.com", :BeOS => "instructure.com_2d34333836313235352d373338@resource.calendar.google.com",
+             :AmigaOS => "instructure.com_2d3939343731333536343132@resource.calendar.google.com" }
 
   def loger; settings.logger end
 
@@ -122,7 +128,7 @@ class ICRT < Sinatra::Application
     room_available?(params[:room], time).to_s
   end
 
-  get '/book_room/:room' do |room|
-    room
+  get '/book_room' do
+    "#{@@rooms.key(params[:room_id]).to_s},#{Time.now.in_time_zone(Time.zone).strftime("%I:%M%p")}"
   end
 end
