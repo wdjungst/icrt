@@ -9,7 +9,7 @@ $ ->
         data: "room=#{$(l).attr('id')}&time=#{$('#time_select').val()}"
         success: (data) ->
           $el = $(l)
-          if data == 'true'
+          if data == 'false'
             $el.removeClass('not-available')
             if $el.attr('data-maphilight')
               $el.data("maphilight", fillColor: "228B22", alwaysOn: true).trigger "alwaysOn.maphilight"
