@@ -54,6 +54,10 @@ $ ->
           #close dialog and requrey rooms to show avai rooms
           console.log('error')
 
+  $('#cancel_reservation_update').bind 'click', (e) ->
+    e.preventDefault()
+    postRooms($('.room'))
+
   $('#time_select').bind 'change', ->
     console.log 'time select changed'
     $('.room').data("maphilight", alwaysOn: false).trigger "alwaysOn.maphilight"

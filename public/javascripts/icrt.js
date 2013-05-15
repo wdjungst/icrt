@@ -79,6 +79,10 @@
         });
       }
     });
+    $('#cancel_reservation_update').bind('click', function(e) {
+      e.preventDefault();
+      return postRooms($('.room'));
+    });
     return $('#time_select').bind('change', function() {
       console.log('time select changed');
       $('.room').data("maphilight", {
