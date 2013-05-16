@@ -48,7 +48,7 @@ $ ->
         success: (data) ->
           event_details = data.split(',')
           bootbox.dialog "Room Booked!", [
-            label: "Modify Event Details"
+            label: "Update Event Details"
             id: "book-details"
             callback: ->
               $('#event_id').val(event_details[0])
