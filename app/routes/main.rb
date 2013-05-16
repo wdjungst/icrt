@@ -1,5 +1,3 @@
-require 'pry'
-
 class ICRT < Sinatra::Application
   enable :sessions
   @@rooms = { :MULTICS => "instructure.com_3336383934393632323839@resource.calendar.google.com", :HURD => "instructure.com_35353435363634322d353735@resource.calendar.google.com",
