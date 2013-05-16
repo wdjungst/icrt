@@ -1,3 +1,5 @@
+require 'pry'
+
 class ICRT < Sinatra::Application
   enable :sessions
   @@rooms = { :MULTICS => "instructure.com_3336383934393632323839@resource.calendar.google.com", :HURD => "instructure.com_35353435363634322d353735@resource.calendar.google.com",
@@ -129,24 +131,47 @@ class ICRT < Sinatra::Application
                             :authorization => user_credentials,
                             :body => JSON.dump(event),
                             :headers => {'Content-Type' => 'application/json'})
+    puts result.body
     halt 400 if result.status != 200
     parsed = JSON.parse(result.data.to_json)
-    puts result.data.to_json
     event_id = parsed['id']
     creator = parsed['creator']
     name = creator['displayName']
     email = creator['email']
+    
+    result = api_client.execute(:api_method => settings.calendar.events.get,
+                                :parameters => { 'calendarId' => params[:room_id], 'eventId' => event_id},
+                                :authorization => user_credentials)
+    event = result.data
+    attendees = [{:email => email}]
+    event.attendees = attendees
+
+    result = api_client.execute(:api_method => settings.calendar.events.update,
+                                 :parameters => {'calendarId' => params[:room_id], 'eventId' => event.id},
+                                 :body_object => event,
+                                 :authorization => user_credentials,
+                                 :headers => {'Content-Type' => 'application/json'})
+    halt 400 if result.status != 200
+
     "#{event_id},#{@@rooms.key(params[:room_id])},#{start_time.strftime("%I:%M%p")},#{@@end_event.strftime("%I:%M%p")}"
   end
   
   post '/update_event_details' do
-    update = { 'summary' => params[:title], 'attendees[]' => params[:attendees] } 
+    room = @@rooms[params[:room].to_sym]
+    result = api_client.execute(:api_method => settings.calendar.events.get,
+                                :parameters => { 'calendarId' => room, 'eventId' => params[:event_id]},
+                                :authorization => user_credentials)
+    event = result.data
+    event.summary = params[:title]
+    people = params[:attendees].gsub!(" ").split(',')
+    attendees = []
+    people.each { |p| attendees << {:email => p}}
+    event.attendees = attendees
     result = api_client.execute(:api_method => settings.calendar.events.update,
-                                 :parameters => {'calendarId' => params[:room], 'eventId' => params[:event_id]},
+                                 :parameters => {'calendarId' => room, 'eventId' => event.id},
+                                 :body_object => event,
                                  :authorization => user_credentials,
-                                 :body => JSON.dump(update),
-                                 :headers => {'Content-Type' => 'applicaiont/json'})
-    puts result.to_json
+                                 :headers => {'Content-Type' => 'application/json'})
     halt 400 if result.status != 200
   end
 end
