@@ -183,7 +183,7 @@ class ICRT < Sinatra::Application
     people.each { |p| attendees << {:email => p }}
     event.attendees = attendees
     method = Proc.new { settings.calendar.events.update }
-    result = api_call(method, {'calendarId' => room, 'eventId' => event.id}, {}, event) 
+    result = api_call(method, {'calendarId' => room, 'eventId' => event.id, 'sendNotifications' => true }, {}, event) 
     halt 400 if result.status != 200
   end
 end
