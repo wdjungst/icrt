@@ -1,5 +1,5 @@
 $ ->
-  buttonsAction = (action) ->
+  disableButtons = (action) ->
     action = '' if typeof action == 'undefined'
     $('.btn').addClass('disabled', action).attr('disabled', action)
 
@@ -76,7 +76,7 @@ $ ->
 
   $('#update_event').bind 'click', (e) ->
     e.preventDefault()
-    buttonsAction('disabled')
+    disableButtons('disabled')
     $.ajax
       type: 'POST',
       url: '/update_event_details',
