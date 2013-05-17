@@ -9,7 +9,6 @@ class ICRT < Sinatra::Application
              :Plan9 => "instructure.com_2d35363438313633332d373831@resource.calendar.google.com", :BeOS => "instructure.com_2d34333836313235352d373338@resource.calendar.google.com",
              :AmigaOS => "instructure.com_2d3939343731333536343132@resource.calendar.google.com" }
 
-  @@times = { '30' => 30, '100' => 60, '130' => 90, '200' => 120, '230' => 150, '300' => 180, '330' => 220, '400' => 250  }
   @@end_event = Time.now.in_time_zone('America/Denver')
 
   def loger; settings.logger end
@@ -28,9 +27,8 @@ class ICRT < Sinatra::Application
   end
   
   def room_available?(room, time)
-    converted_time = @@times[time]
     start_time = Time.now.in_time_zone('America/Denver')
-    @@end_event = round_time(start_time + converted_time.minutes)
+    @@end_event = round_time(start_time + time.to_i.minutes)
     freebusy?(room, start_time, @@end_event)
   end
 
@@ -143,13 +141,12 @@ class ICRT < Sinatra::Application
 
   post '/duration' do
     start_time = Time.now.in_time_zone('America/Denver')
-    converted_time = @@times[params[:time].gsub(':','')]
-    end_time = round_time(start_time + converted_time.minutes)
+    end_time = round_time(start_time + params[:time].to_i.minutes)
     "#{start_time.strftime("%I:%M%p")},#{end_time.strftime("%I:%M%p")}"
   end
 
   post '/room' do
-    room_available?(params[:room], params[:time].gsub!(':', '')).to_s
+    room_available?(params[:room], params[:time])
   end
 
   post '/book_room' do

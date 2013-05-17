@@ -1,14 +1,20 @@
 $ ->
+  buttonsAction = (action) ->
+    action = '' if typeof action == 'undefined'
+    $('.btn').addClass('disabled', action).attr('disabled', action)
+
   $('.map').maphilight()
 
   duration = () ->
+    $duration = $('#duration')
+    $duration.html('Loading Times...')
     $.ajax
       type: "POST"
       url: '/duration'
-      data: "time=#{$('#time_select').val()}"
+      data: "time=#{$('#time_select option:selected').val()}"
       success: (data) ->
         times = data.split(',')
-        $('#duration').html("Showing rooms available from #{times[0]} to #{times[1]}")
+        $duration.html("Showing rooms available from #{times[0]} to #{times[1]}")
       error: (data) ->
         console.log(data)
 
@@ -18,7 +24,7 @@ $ ->
       $.ajax
         type: "POST"
         url: '/room'
-        data: "room=#{$(l).attr('id')}&time=#{$('#time_select').val()}"
+        data: "room=#{$(l).attr('id')}&time=#{$('#time_select option:selected').val()}"
         success: (data) ->
           $el = $(l)
           if data == 'false'
@@ -39,7 +45,7 @@ $ ->
   $('area').bind 'click', (e) ->
     e.preventDefault()
     $area = $(@)
-    duration = $('#time_select').val()
+    duration = $('#time_select option:selected').val()
     unless $area.hasClass('not-available')
       $.ajax
         type: 'POST',
@@ -65,12 +71,12 @@ $ ->
               postRooms($('.room'))
           ]
         error: ->
-          #close dialog and requrey rooms to show avai rooms
-          console.log('error')
+          $('#update_modal').modal('hide')
+          postRooms($('.room'))
 
   $('#update_event').bind 'click', (e) ->
     e.preventDefault()
-    #disable action buttons
+    buttonsAction('disabled')
     $.ajax
       type: 'POST',
       url: '/update_event_details',
@@ -79,15 +85,22 @@ $ ->
         $('#update_modal').modal('hide')
         postRooms($('.room'))
       error: (data) ->
-        $('.error-box').html(data)
-    false
+        #show error some how
 
   $('#cancel_event_update').bind 'click', (e) ->
     e.preventDefault()
     postRooms($('.room'))
 
+  $('#settings').bind 'click', (e) ->
+    $settings = $(@)
+    $timeFrame = $('#time_frame')
+    $timeFrame.slideToggle ->
+      if $timeFrame.is(':visible')
+        $settings.addClass('btn-primary')
+      else
+        $settings.removeClass('btn-primary')
+
   $('#time_select').bind 'change', ->
-    console.log 'time select changed'
     $('.room').data("maphilight", alwaysOn: false).trigger "alwaysOn.maphilight"
     postRooms($('.room'))
 
