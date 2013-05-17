@@ -55,17 +55,41 @@ class ICRT < Sinatra::Application
     time
   end
 
+  def api_call(method, params = {}, body_params = {}, body_object = nil, header = true)
+    if !header
+      api_client.execute({
+        api_method: method.call,
+        parameters: params,
+        authorization: user_credentials,
+      })
+    else
+      if body_object == nil
+        puts "PARAMS"
+        puts params
+        api_client.execute({
+          api_method: method.call,
+          parameters: params,
+          body: JSON.dump(body_params),
+          authorization: user_credentials,
+          headers: {'Content-Type' => 'application/json'}
+        })
+      else
+        api_client.execute({
+          api_method: method.call,
+          parameters: params,
+          body_object: body_object,
+          authorization: user_credentials,
+          headers: {'Content-Type' => 'application/json'}
+        })
+      end
+    end
+  end
+
   def freebusy?(room, min_time, max_time)
-    result = api_client.execute({
-      api_method: settings.calendar.freebusy.query, 
-      body: JSON.dump({
-          timeMin: min_time.iso8601, 
-          timeMax: max_time.iso8601,
-          items: [{ id: room}]
-      }),
-      :authorization => user_credentials,
-      headers: {'Content-Type' => 'application/json'}
-    })
+    method = Proc.new { settings.calendar.freebusy.query }
+    result = api_call(method, {}, 
+         {timeMin: min_time.iso8601, timeMax: max_time.iso8601, items: [{ id: room }] }) 
+    
     result.body.split('busy').last.include?('start') ? 'true' : 'false'
   end
 
@@ -125,53 +149,42 @@ class ICRT < Sinatra::Application
     Time.zone = "America/Denver"
     start_time = Time.now.in_time_zone(Time.zone)
     event = { 'summary' => 'STOLEN!', 'start' => { 'dateTime' => "#{start_time.iso8601}" }, 'end' => { 'dateTime' => "#{@@end_event.iso8601}" } } 
-
-    result = api_client.execute(:api_method => settings.calendar.events.insert,
-                            :parameters => {'calendarId' => params[:room_id]},
-                            :authorization => user_credentials,
-                            :body => JSON.dump(event),
-                            :headers => {'Content-Type' => 'application/json'})
-    puts result.body
+    
+    method = Proc.new { settings.calendar.events.insert }
+    result = api_call(method, {'calendarId' => params[:room_id]}, event)
+    
     halt 400 if result.status != 200
     parsed = JSON.parse(result.data.to_json)
     event_id = parsed['id']
     creator = parsed['creator']
-    name = creator['displayName']
     email = creator['email']
     
-    result = api_client.execute(:api_method => settings.calendar.events.get,
-                                :parameters => { 'calendarId' => params[:room_id], 'eventId' => event_id},
-                                :authorization => user_credentials)
+    method = Proc.new { settings.calendar.events.get }
+    result = api_call(method, { 'calendarId' => params[:room_id], 'eventId' => event_id }, {}, nil, false)
     event = result.data
     attendees = [{:email => email}]
     event.attendees = attendees
 
-    result = api_client.execute(:api_method => settings.calendar.events.update,
-                                 :parameters => {'calendarId' => params[:room_id], 'eventId' => event.id},
-                                 :body_object => event,
-                                 :authorization => user_credentials,
-                                 :headers => {'Content-Type' => 'application/json'})
+    method = Proc.new { settings.calendar.events.update }
+    result = api_call(method, {'calendarId' => params[:room_id], 'eventId' => event.id}, {},  event )
     halt 400 if result.status != 200
-
     "#{event_id},#{@@rooms.key(params[:room_id])},#{start_time.strftime("%I:%M%p")},#{@@end_event.strftime("%I:%M%p")}"
   end
   
   post '/update_event_details' do
     room = @@rooms[params[:room].to_sym]
-    result = api_client.execute(:api_method => settings.calendar.events.get,
-                                :parameters => { 'calendarId' => room, 'eventId' => params[:event_id]},
-                                :authorization => user_credentials)
+    method = Proc.new { settings.calendar.events.get }
+    result = api_call(method, { 'calendarId' => room, 'eventId' => params[:event_id] }, {}, nil, false)
+  
     event = result.data
     event.summary = params[:title]
-    people = params[:attendees].gsub!(" ").split(',')
+    people = params[:attendees].split(',')
     attendees = []
-    people.each { |p| attendees << {:email => p}}
+    people.each { |p| attendees << {:email => p.strip! }}
     event.attendees = attendees
-    result = api_client.execute(:api_method => settings.calendar.events.update,
-                                 :parameters => {'calendarId' => room, 'eventId' => event.id},
-                                 :body_object => event,
-                                 :authorization => user_credentials,
-                                 :headers => {'Content-Type' => 'application/json'})
+    puts result.data
+    method = Proc.new { settings.calendar.events.update }
+    result = api_call(method, {'calendarId' => room, 'eventId' => event.id}, {}, event) 
     halt 400 if result.status != 200
   end
 end
