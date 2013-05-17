@@ -148,7 +148,7 @@ class ICRT < Sinatra::Application
   post '/book_room' do
     Time.zone = "America/Denver"
     start_time = Time.now.in_time_zone(Time.zone)
-    event = { 'summary' => 'STOLEN!', 'start' => { 'dateTime' => "#{start_time.iso8601}" }, 'end' => { 'dateTime' => "#{@@end_event.iso8601}" } } 
+    event = { 'summary' => 'BOOKED!', 'start' => { 'dateTime' => "#{start_time.iso8601}" }, 'end' => { 'dateTime' => "#{@@end_event.iso8601}" } } 
     
     method = Proc.new { settings.calendar.events.insert }
     result = api_call(method, {'calendarId' => params[:room_id]}, event)
@@ -180,9 +180,8 @@ class ICRT < Sinatra::Application
     event.summary = params[:title]
     people = params[:attendees].split(',')
     attendees = []
-    people.each { |p| attendees << {:email => p.strip! }}
+    people.each { |p| attendees << {:email => p }}
     event.attendees = attendees
-    puts result.data
     method = Proc.new { settings.calendar.events.update }
     result = api_call(method, {'calendarId' => room, 'eventId' => event.id}, {}, event) 
     halt 400 if result.status != 200
