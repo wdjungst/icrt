@@ -79,6 +79,8 @@
                   $('#room_name').val(event_details[1]);
                   $('#start_time').val(event_details[2]);
                   $('#end_time').val(event_details[3]);
+                  $('#event_title').val(event_details[4]);
+                  $('#attendees').val(event_details[5]);
                   return $('#update_modal').modal('show');
                 }
               }, {

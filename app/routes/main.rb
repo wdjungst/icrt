@@ -155,8 +155,7 @@ class ICRT < Sinatra::Application
   post '/book_room' do
     Time.zone = "America/Denver"
     start_time = Time.now.in_time_zone(Time.zone)
-    event = { 'summary' => 'BOOKED!', 'start' => { 'dateTime' => "#{start_time.iso8601}" }, 'end' => { 'dateTime' => "#{@@end_event.iso8601}" } } 
-    
+    event = { 'summary' => 'BOOKED!', 'start' => { 'dateTime' => "#{start_time.iso8601}" }, 'end' => { 'dateTime' => "#{@@end_event.iso8601}" } }  
     method = Proc.new { settings.calendar.events.insert }
     result = api_call(method, {'calendarId' => params[:room_id]}, event)
     
@@ -175,7 +174,7 @@ class ICRT < Sinatra::Application
     method = Proc.new { settings.calendar.events.update }
     result = api_call(method, {'calendarId' => params[:room_id], 'eventId' => event.id}, {},  event )
     halt 400 if result.status != 200
-    "#{event_id},#{@@rooms.key(params[:room_id])},#{start_time.strftime("%I:%M%p")},#{@@end_event.strftime("%I:%M%p")}"
+    "#{event_id},#{@@rooms.key(params[:room_id])},#{start_time.strftime("%I:%M%p")},#{@@end_event.strftime("%I:%M%p")},#{event.summary},#{email}"
   end
   
   post '/update_event_details' do
@@ -187,7 +186,7 @@ class ICRT < Sinatra::Application
     event.summary = params[:title]
     people = params[:attendees].split(',')
     attendees = []
-    people.each { |p| attendees << {:email => p }}
+    people.each { |p| attendees << {:email => p.gsub(" ", "") }}
     event.attendees = attendees
     method = Proc.new { settings.calendar.events.update }
     result = api_call(method, {'calendarId' => room, 'eventId' => event.id, 'sendNotifications' => true }, {}, event) 
