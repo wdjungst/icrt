@@ -1,7 +1,19 @@
 $ ->
   $('.map').maphilight()
 
+  duration = () ->
+    $.ajax
+      type: "POST"
+      url: '/duration'
+      data: "time=#{$('#time_select').val()}"
+      success: (data) ->
+        times = data.split(',')
+        $('#duration').html("Showing rooms available from #{times[0]} to #{times[1]}")
+      error: (data) ->
+        console.log(data)
+
   postRooms = (rooms) ->
+    duration()
     $.each rooms, (i, l) ->
       $.ajax
         type: "POST"
@@ -76,3 +88,4 @@ $ ->
     console.log 'time select changed'
     $('.room').data("maphilight", alwaysOn: false).trigger "alwaysOn.maphilight"
     postRooms($('.room'))
+

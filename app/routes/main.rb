@@ -141,6 +141,13 @@ class ICRT < Sinatra::Application
     haml :index
   end
 
+  post '/duration' do
+    start_time = Time.now.in_time_zone('America/Denver')
+    converted_time = @@times[params[:time].gsub(':','')]
+    end_time = round_time(start_time + converted_time.minutes)
+    "#{start_time.strftime("%I:%M%p")},#{end_time.strftime("%I:%M%p")}"
+  end
+
   post '/room' do
     room_available?(params[:room], params[:time].gsub!(':', '')).to_s
   end

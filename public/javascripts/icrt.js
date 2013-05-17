@@ -2,9 +2,25 @@
 (function() {
 
   $(function() {
-    var postRooms;
+    var duration, postRooms;
     $('.map').maphilight();
+    duration = function() {
+      return $.ajax({
+        type: "POST",
+        url: '/duration',
+        data: "time=" + ($('#time_select').val()),
+        success: function(data) {
+          var times;
+          times = data.split(',');
+          return $('#duration').html("Showing rooms available from " + times[0] + " to " + times[1]);
+        },
+        error: function(data) {
+          return console.log(data);
+        }
+      });
+    };
     postRooms = function(rooms) {
+      duration();
       return $.each(rooms, function(i, l) {
         return $.ajax({
           type: "POST",
@@ -42,7 +58,7 @@
     };
     postRooms($('.room'));
     $('area').bind('click', function(e) {
-      var $area, duration;
+      var $area;
       e.preventDefault();
       $area = $(this);
       duration = $('#time_select').val();
