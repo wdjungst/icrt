@@ -9,7 +9,7 @@ require 'yaml'
 require 'open-uri'
 require 'net/https'
 require 'pry'
-require 'activesupport'
+require 'active_support/all'
 
 module Net
   class HTTP
