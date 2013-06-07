@@ -26,10 +26,11 @@ class ICRT < Sinatra::Application
    )
   end
   
-  def room_available?(room, time)
+  def room_available?(rooms, time)
     start_time = Time.now.in_time_zone('America/Denver')
     @@end_event = round_time(start_time + time.to_i.minutes)
-    freebusy?(room, start_time, @@end_event)
+    body = freebusy?(rooms, start_time, @@end_event)
+    # parse each room for free busy
   end
 
   def closest(n)
@@ -83,12 +84,12 @@ class ICRT < Sinatra::Application
     end
   end
 
-  def freebusy?(room, min_time, max_time)
+  def freebusy?(rooms, min_time, max_time)
     method = Proc.new { settings.calendar.freebusy.query }
     result = api_call(method, {}, 
-         {timeMin: min_time.iso8601, timeMax: max_time.iso8601, items: [{ id: room }] }) 
-    
-    result.body.split('busy').last.include?('start') ? 'true' : 'false'
+         {timeMin: min_time.iso8601, timeMax: max_time.iso8601, items: rooms.split(',').map {|room| {id: room}} })
+
+    result.body
   end
 
   configure do
@@ -146,7 +147,7 @@ class ICRT < Sinatra::Application
   end
 
   post '/room' do
-    room_available?(params[:room], params[:time])
+    room_available?(params[:rooms], params[:time])
   end
 
   post '/book_room' do
