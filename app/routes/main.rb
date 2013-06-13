@@ -30,7 +30,8 @@ class ICRT < Sinatra::Application
     start_time = Time.now.in_time_zone('America/Denver')
     @@end_event = round_time(start_time + time.to_i.minutes)
     body = freebusy?(rooms, start_time, @@end_event)
-    # parse each room for free busy
+    calendars = body.data['calendars'].to_hash
+    available_calendars = calendars.map { |k,v| k if v['busy'].empty? }.compact.join(',')
   end
 
   def closest(n)
@@ -89,7 +90,7 @@ class ICRT < Sinatra::Application
     result = api_call(method, {}, 
          {timeMin: min_time.iso8601, timeMax: max_time.iso8601, items: rooms.split(',').map {|room| {id: room}} })
 
-    result.body
+    result
   end
 
   configure do
@@ -114,8 +115,10 @@ class ICRT < Sinatra::Application
   end
 
   before do
-    unless user_credentials.access_token || request.path_info =~ /^\/oauth2/
-      redirect to('/oauth2authorize')
+    if request.path_info.split('/')[1] != 'room'
+      unless user_credentials.access_token || request.path_info =~ /^\/oauth2/
+        redirect to('/oauth2authorize')
+      end
     end
   end
 

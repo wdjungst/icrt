@@ -20,26 +20,36 @@ $ ->
 
   postRooms = (rooms) ->
     duration()
+    room_ids = []
     $.each rooms, (i, l) ->
-      $.ajax
-        type: "POST"
-        url: '/room'
-        data: "room=#{$(l).attr('id')}&time=#{$('#time_select option:selected').val()}"
-        success: (data) ->
+      room_ids.push($(l).attr('id'))
+    $.ajax
+      type: "POST"
+      url: '/room'
+      data: "rooms=#{room_ids}&time=#{$('#time_select option:selected').val()}"
+      success: (data) ->
+        availableRoomIds = data.split(',')
+        $.each rooms, (i, l) ->
           $el = $(l)
-          if data == 'false'
-            $el.removeClass('not-available')
-            if $el.attr('data-maphilight')
-              $el.data("maphilight", fillColor: "228B22", alwaysOn: true).trigger "alwaysOn.maphilight"
-            else
-              $el.attr('data-maphilight','{"fillColor":"228B22","fillOpacity":"0.3", "alwaysOn":true}').trigger "alwaysOn.maphilight"
+          $el.addClass('not-available')
+          if $el.attr('data-maphilight')
+            $el.data("maphilight", fillColor:"FF0000", alwaysOn:true).trigger "alwaysOn.maphilight"
           else
-            if $el.attr('data-maphilight')
-              $el.data("maphilight", fillColor: "FF0000", alwaysOn: true).trigger "alwaysOn.maphilight"
-            else
-              $el.addClass('not-available').attr('data-maphilight','{"fillColor":"FF0000","fillOpacity":"0.3", "alwaysOn":true}').trigger "alwaysOn.maphilight"
-        error: (data) ->
-          console.log(data)
+            $el.attr('data-maphilight','{"fillColor":"FF0000","fillOpacity":"0.3", "alwaysOn":true}').trigger "alwaysOn.maphilight"
+        availableRooms = []
+        $.each rooms, (roomIndex, room) ->
+          if $.inArray($(room).attr('id'), availableRoomIds) > -1
+            availableRooms.push(room) 
+        $.each availableRooms, (roomIndex, room) ->
+          $el = $(room)
+          if $el.attr('data-maphilight')
+            $el.removeClass('not-available')
+            $el.data("maphilight", fillColor: "228B22", alwaysOn: true).trigger "alwaysOn.maphilight"
+          else
+            $el.removeClass('not-available')
+            $el.attr('data-maphilight','{"fillColor":"228B22","fillOpacity":"0.3", "alwaysOn":true}').trigger "alwaysOn.maphilight"
+      error: (data) ->
+        console.log(data)
   postRooms($('.room'))
 
   $('area').bind 'click', (e) ->
